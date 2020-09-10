@@ -1,0 +1,11 @@
+FROM node:alpine
+
+RUN apk add bash curl \
+    && curl --fail --silent --output /bin/wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh \
+    && chmod a+x /bin/wait-for-it.sh
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY *.js ./
+
+CMD ["sh", "-c", "wait-for-it.sh $PG_HOST:5432 -- npm run dev"]

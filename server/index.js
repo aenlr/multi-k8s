@@ -20,6 +20,7 @@ pgClient.on('error', () => {
 });
 
 pgClient.query('CREATE TABLE IF NOT EXISTS vals (num INT)')
+    .then(() => console.log('Skapade tabell'))
     .catch(err => console.error('Error creating vals table:', err));
 
 // Redis setup
@@ -36,9 +37,13 @@ app.get('/', (req, res) => {
     res.send('Hello');
 });
 
-app.get('/values/all', async (req, res) => {
-    const values = await pgClient.query('SELECT num FROM vals');
-    res.send(values.rows);
+app.get('/values/all', async (req, res, next) => {
+    try {
+        const values = await pgClient.query('SELECT num FROM vals');
+        res.send(values.rows);
+    } catch (err) {
+        next(err);
+    }
 });
 
 app.get('/values/current', async (req, res) => {
@@ -51,19 +56,22 @@ app.get('/values/current', async (req, res) => {
     });
 });
 
-app.post('/values', async (req, res) => {
-    const { index } = req.body;
-    if (index > 40 || index < 0) {
-        res.status(422).send('Refusing to compute fib(' + index + ')');
-    } else {
-        redisClient.hset('values', index, 'Nothing yet!');
-        redisPublisher.publish('insert', index);
-        pgClient.query('INSERT INTO vals(num) VALUES($1)', [index]);
-        res.send({ working: true });
+app.post('/values', async (req, res, next) => {
+    try {
+        const { index } = req.body;
+        if (index > 40 || index < 0) {
+            res.status(422).send('Refusing to compute fib(' + index + ')');
+        } else {
+            redisClient.hset('values', index, 'Nothing yet!');
+            redisPublisher.publish('insert', index);
+            pgClient.query('INSERT INTO vals(num) VALUES($1)', [index]);
+            res.send({ working: true });
+        }
+    } catch (err) {
+        next(err);
     }
 });
 
 app.listen(5000, err => {
     console.log('Listening on port 5000');
 });
-

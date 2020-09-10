@@ -3,8 +3,8 @@ import axios from 'axios';
 
 class Fib extends React.Component {
     state = {
-        seenIndexes: [{ num: 1 }, { num: 2 }, { num: 3 }],
-        values: { 1: 1 },
+        seenIndexes: [],
+        values: {},
         index: ''
     };
 
@@ -45,6 +45,9 @@ class Fib extends React.Component {
                 <form onSubmit={this.handleSubmit}>
                     <label>Index:</label>
                     <input
+                        type="number"
+                        min="0"
+                        required
                         value={this.state.index}
                         onChange={event => this.setState({ index: event.target.value })}
                     />
@@ -56,7 +59,7 @@ class Fib extends React.Component {
                 <h3>Computed values</h3>
                 {Object.keys(this.state.values).map(key => (
                     <div key={key}>
-                        {key} = {this.state.values[key]}
+                        fib({key}) = {this.state.values[key]}
                     </div>
                 ))}
             </div>

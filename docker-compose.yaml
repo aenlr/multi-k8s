@@ -1,0 +1,91 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: sekrit
+    networks:
+      - app
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    networks:
+      - app
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: server
+      dockerfile: Dockerfile.dev
+    environment:
+      PG_HOST: postgres
+      PG_DATABASE: postgres
+      PG_USER: postgres
+      PG_PASSWORD: sekrit
+      REDIS_HOST: redis
+    ports:
+      - "5001:5000"
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    networks:
+      - app
+    depends_on:
+      - postgres
+      - redis
+
+  client:
+    build:
+      context: client
+      dockerfile: Dockerfile.dev
+    networks:
+      - app
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+    stdin_open: true
+
+  worker:
+    build:
+      context: worker
+      dockerfile: Dockerfile.dev
+    environment:
+      REDIS_HOST: redis
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+    networks:
+      - app
+    depends_on:
+      - redis
+  
+  nginx:
+    image: nginx:latest
+    #build:
+    #  context: nginx
+    #  dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - "8080:80"
+    networks:
+      - app
+    depends_on:
+      - api
+      - client
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+networks:
+  app:
+
+volumes:
+  pgdata:
