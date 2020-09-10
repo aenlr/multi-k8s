@@ -7,5 +7,5 @@ services:
 script:
   - docker build -t client:test -f client/Dockerfile.dev client
   - docker run --rm -e CI=true client:test npm test
-  - echo "$$DOCKER_PSW" | docker login -u $DOCKER_USR --password-stdin
+  - echo "$DOCKER_PSW" | docker login -u $DOCKER_USR --password-stdin
   - make prod push
