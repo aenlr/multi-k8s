@@ -1,7 +1,11 @@
+language: generic
+os: linux
+dist: bionic
 services:
   - docker
 
 script:
   - docker build -t client:test -f client/Dockerfile.dev client
   - docker run --rm -e CI=true client:test npm test
-  - make prod
+  - echo "$$DOCKER_PSW" | docker login -u $DOCKER_USR --password-stdin
+  - make prod push

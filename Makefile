@@ -8,7 +8,12 @@ dev:
 
 prod:
 	@for d in $(DIRS); do \
-		docker build $$d -t anorland/complex-$$d:$@ ; \
+		docker build $$d -t anorland/complex-$$d ; \
+	done
+
+push:
+	@for d in $(DIRS); do \
+		docker push anorland/complex-$$d ; \
 	done
 
 npm-install:
