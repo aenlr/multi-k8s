@@ -1,0 +1,7 @@
+services:
+  - docker
+
+script:
+  - docker build -t client:test -f client/Dockerfile.dev client
+  - docker run --rm -e CI=true client:test npm test
+  - make prod
