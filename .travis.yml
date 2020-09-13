@@ -16,9 +16,8 @@ script:
     app: multi-docker
     env: MultiDocker-env-1
     bucket_name: elasticbeanstalk-us-east-2-918077598026
-    bucket_path: docker-react
+    bucket_path: multi-docker
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_KEY
     on:
       branch: master
-  
