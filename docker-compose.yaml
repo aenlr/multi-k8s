@@ -28,8 +28,6 @@ services:
       PG_USER: postgres
       PG_PASSWORD: sekrit
       REDIS_HOST: redis
-    ports:
-      - "5001:5000"
     volumes:
       - /app/node_modules
       - ./server:/app
@@ -50,8 +48,6 @@ services:
       - ./client:/app
     depends_on:
       - api
-    ports:
-      - "3000:3000"
     stdin_open: true
 
   worker:

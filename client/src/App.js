@@ -9,7 +9,7 @@ function App() {
   return (
     <Router>
       <div>
-        <h1>Fibulator</h1>
+        <h1>Fibulator!</h1>
         <Link to="/">Home</Link> | <Link to="/otherpage">Other Page</Link>
 
         <Route exact path="/" component={Fib}/>
