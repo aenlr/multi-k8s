@@ -20,3 +20,8 @@ npm-install:
 	@for d in $(DIRS); do \
 		(cd $$d && npm install); \
 	done
+
+clean:
+	@for d in $(DIRS); do \
+		rm -rf $$d/node_modules; \
+	done
