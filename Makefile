@@ -1,19 +1,16 @@
 
-DIRS = client server worker nginx
+DIRS = client server worker
 
-dev:
-	@for d in $(DIRS); do \
-		docker build $$d -f $$d/Dockerfile.$@ -t $$d:$@ ; \
-	done
+all: build
 
-prod:
+build:
 	@for d in $(DIRS); do \
-		docker build $$d -t anorland/complex-$$d ; \
+		docker build $$d -t anorland/multi-$$d ; \
 	done
 
 push:
 	@for d in $(DIRS); do \
-		docker push anorland/complex-$$d ; \
+		docker push anorland/multi-$$d ; \
 	done
 
 npm-install:
