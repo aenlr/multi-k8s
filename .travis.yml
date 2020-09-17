@@ -5,9 +5,13 @@ language: generic
 services:
   - docker
 
+env:
+  global:
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+
 before_install:
   - openssl aes-256-cbc -K $encrypted_af164d12e359_key -iv $encrypted_af164d12e359_iv -in service-account.json.enc -out service-account.json -d
-  - curl --silent --fail https://sdk.cloud.google.com | CLOUDSDK_CORE_DISABLE_PROMPTS=1 bash >/dev/null
+  - curl --silent --fail https://sdk.cloud.google.com | bash >/dev/null
   - source $HOME/google-cloud-sdk/path.bash.inc
   - gcloud components install kubectl
   - gcloud auth activate-service-account --key-file service-account.json
