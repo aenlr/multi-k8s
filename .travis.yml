@@ -18,6 +18,8 @@ before_install:
   - gcloud config set project multi-k8s-289814
   - gcloud config set compute/zone europe-north1-a
   - gcloud container clusters get-credentials multi-cluster
+  - echo "$DOCKER_PSW" | docker login -u "$DOCKER_USR" --password-stdin
 
 script:
-  - echo Woho
+  - docker build -t client:dev -f ./client/Dockerfile.dev ./client
+  - docker run -e CI=true client:dev npm test
