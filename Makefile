@@ -1,4 +1,4 @@
-TAG = latest
+TAG := $(shell git rev-parse HEAD)
 REPO = anorland
 DIRS = client server worker
 
@@ -6,23 +6,29 @@ all: build
 
 build:
 	@for d in $(DIRS); do \
-		docker build $$d -t $(REPO)/multi-$$d:$(TAG) ; \
+  		cmd="docker build $$d -t $(REPO)/multi-$$d:$(TAG)" && \
+  		echo "$$cmd" && $$cmd || exit $$? ; \
 	done
 
 push:
 	@for d in $(DIRS); do \
-		docker push $(REPO)/multi-$$d:$(TAG) ; \
-	done
-
-npm-install:
-	@for d in $(DIRS); do \
-		(cd $$d && npm install); \
+  		cmd="docker push $(REPO)/multi-$$d:$(TAG)" && \
+  		echo "$$cmd" && $$cmd || exit $$? ; \
 	done
 
 deploy:
 	kubectl apply -f k8s
 	@for d in $(DIRS); do \
-  		kubectl set image deployments/$$d-deployment $$d=$(REPO)/multi-$$d:$(TAG) ;
+  		cmd="kubectl set image deployments/$$d-deployment $$d=$(REPO)/multi-$$d:$(TAG)" && \
+  		echo "$$cmd" && $$cmd || exit $$? ; \
+	done
+
+secrets:
+	kubectl create secret generic postgres --from-literal=PG_PASSWORD=sekrit
+
+npm-install:
+	@for d in $(DIRS); do \
+		(cd $$d && npm install); \
 	done
 
 clean:

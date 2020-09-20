@@ -29,6 +29,6 @@ script:
 
 #deploy:
 #  provider: script
-#  script: make deploy
+#  script: make TAG=$GIT_SHA deploy
 #  on:
 #    branch: master
