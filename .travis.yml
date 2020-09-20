@@ -27,8 +27,8 @@ script:
   - make TAG=$GIT_SHA build push
   - make TAG=latest build push
 
-#deploy:
-#  provider: script
-#  script: make TAG=$GIT_SHA deploy
-#  on:
-#    branch: master
+deploy:
+  provider: script
+  script: make TAG=$GIT_SHA deploy
+  on:
+    branch: master
